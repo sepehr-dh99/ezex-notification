@@ -2,25 +2,30 @@ package email
 
 import (
 	"bytes"
-	"path/filepath"
+	"sync"
 	"text/template"
 
+	embed "github.com/ezex-io/ezex-notification"
 	"github.com/ezex-io/ezex-notification/config"
 	"github.com/ezex-io/ezex-notification/internal/ports"
 	"gopkg.in/gomail.v2"
 )
 
 type SMTPAdapter struct {
-	config *config.Config
+	config        *config.Config
+	templateCache map[string]*template.Template
+	templateMutex sync.RWMutex
 }
 
 func NewSMTPAdapter(cfg *config.Config) ports.EmailSender {
-	return &SMTPAdapter{config: cfg}
+	return &SMTPAdapter{
+		config:        cfg,
+		templateCache: make(map[string]*template.Template),
+	}
 }
 
 func (a *SMTPAdapter) SendOTPEmail(to, otp string) error {
-	tmplPath := filepath.Join("assets", "template", "email", "otp.md")
-	tmpl, err := template.ParseFiles(tmplPath)
+	tmpl, err := a.getTemplate("otp.md")
 	if err != nil {
 		return err
 	}
@@ -44,4 +49,33 @@ func (a *SMTPAdapter) SendOTPEmail(to, otp string) error {
 	)
 
 	return d.DialAndSend(m)
+}
+
+func (a *SMTPAdapter) getTemplate(filename string) (*template.Template, error) {
+	// Check cache first
+	a.templateMutex.RLock()
+	cachedTmpl, exists := a.templateCache[filename]
+	a.templateMutex.RUnlock()
+	if exists {
+		return cachedTmpl, nil
+	}
+
+	// Load from embedded FS
+	content, err := embed.TemplateFS.ReadFile("assets/template/email/" + filename)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse template
+	tmpl, err := template.New(filename).Parse(string(content))
+	if err != nil {
+		return nil, err
+	}
+
+	// Store in cache
+	a.templateMutex.Lock()
+	a.templateCache[filename] = tmpl
+	a.templateMutex.Unlock()
+
+	return tmpl, nil
 }
