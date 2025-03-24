@@ -20,13 +20,11 @@ func (s *Server) SendOTP(ctx context.Context, req *proto.SendOTPRequest) (*proto
 	otp, err := s.otpService.GenerateAndSendOTP(req.Email)
 	if err != nil {
 		return &proto.SendOTPResponse{
-			Otp:     "",
-			Success: false,
+			Otp: "",
 		}, err
 	}
 
 	return &proto.SendOTPResponse{
-		Otp:     otp,
-		Success: true,
+		Otp: otp,
 	}, nil
 }

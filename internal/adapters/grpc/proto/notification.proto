@@ -14,5 +14,4 @@ message SendOTPRequest {
 
 message SendOTPResponse {
   string otp = 1;
-  bool success = 2;
 }
