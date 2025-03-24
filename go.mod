@@ -1,3 +1,3 @@
-module github.com/ezex-io/go-boilerplate
+module github.com/ezex-io/ezex-notification
 
-go 1.23.5
+go 1.24.1
