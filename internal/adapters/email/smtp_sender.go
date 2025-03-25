@@ -1,7 +1,9 @@
+// Package email defines email adaptor
 package email
 
 import (
 	"bytes"
+	"fmt"
 	"sync"
 	"text/template"
 
@@ -11,12 +13,14 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+// SMTPAdapter schema for email smtp adapter.
 type SMTPAdapter struct {
 	config        *config.Config
 	templateCache map[string]*template.Template
 	templateMutex sync.RWMutex
 }
 
+// NewSMTPAdapter act as smtp sender constructor.
 func NewSMTPAdapter(cfg *config.Config) ports.EmailSender {
 	return &SMTPAdapter{
 		config:        cfg,
@@ -24,7 +28,8 @@ func NewSMTPAdapter(cfg *config.Config) ports.EmailSender {
 	}
 }
 
-func (a *SMTPAdapter) SendOTPEmail(to, otp string) error {
+// SendOTPEmail uses markdown template and otp code to send an email.
+func (a *SMTPAdapter) SendOTPEmail(sendTo, otp string) error {
 	tmpl, err := a.getTemplate("otp.md")
 	if err != nil {
 		return err
@@ -32,23 +37,27 @@ func (a *SMTPAdapter) SendOTPEmail(to, otp string) error {
 
 	var body bytes.Buffer
 	if err := tmpl.Execute(&body, map[string]string{"OTP": otp}); err != nil {
-		return err
+		return fmt.Errorf("failed to apply otp code to template: %w", err)
 	}
 
-	m := gomail.NewMessage()
-	m.SetHeader("From", a.config.FromEmail)
-	m.SetHeader("To", to)
-	m.SetHeader("Subject", "Your Verification Code")
-	m.SetBody("text/plain", body.String())
+	message := gomail.NewMessage()
+	message.SetHeader("From", a.config.FromEmail)
+	message.SetHeader("To", sendTo)
+	message.SetHeader("Subject", "Your Verification Code")
+	message.SetBody("text/plain", body.String())
 
-	d := gomail.NewDialer(
+	dialer := gomail.NewDialer(
 		a.config.SMTPHost,
 		a.config.SMTPPort,
 		a.config.SMTPUser,
 		a.config.SMTPPass,
 	)
 
-	return d.DialAndSend(m)
+	if err := dialer.DialAndSend(message); err != nil {
+		return fmt.Errorf("failed to send OTP email to %s: %w", sendTo, err)
+	}
+
+	return nil
 }
 
 func (a *SMTPAdapter) getTemplate(filename string) (*template.Template, error) {
@@ -63,13 +72,13 @@ func (a *SMTPAdapter) getTemplate(filename string) (*template.Template, error) {
 	// Load from embedded FS
 	content, err := embed.TemplateFS.ReadFile("assets/template/email/" + filename)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read email template %s: %w", filename, err)
 	}
 
 	// Parse template
 	tmpl, err := template.New(filename).Parse(string(content))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse email template to string: %w", err)
 	}
 
 	// Store in cache

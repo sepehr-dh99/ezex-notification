@@ -1,12 +1,15 @@
+// Package config defines project global variables
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
+// Config schema type.
 type Config struct {
 	GRPCPort  string
 	SMTPHost  string
@@ -17,11 +20,12 @@ type Config struct {
 	FromEmail string
 }
 
+// Load retieves project configs from environment variables.
 func Load() (*Config, error) {
 	// Load from the current working directory
 	err := godotenv.Load("config/.env")
 	if err != nil {
-		return nil, err // Return the error to catch any loading issues
+		return nil, fmt.Errorf("failed to load comfigs: %w", err)
 	}
 
 	port, _ := strconv.Atoi(os.Getenv("SMTP_PORT"))

@@ -1,3 +1,4 @@
+// Package main defines the entry point for the program.
 package main
 
 import (
@@ -9,7 +10,7 @@ import (
 	grpcserver "github.com/ezex-io/ezex-notification/internal/adapters/grpc"
 	"github.com/ezex-io/ezex-notification/internal/adapters/grpc/proto"
 	"github.com/ezex-io/ezex-notification/internal/interactors"
-	googleGrpc "google.golang.org/grpc"
+	googlegrpc "google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -26,7 +27,7 @@ func main() {
 	otpService := interactors.NewOTPService(emailSender, cfg)
 
 	// Create gRPC server
-	server := googleGrpc.NewServer()
+	server := googlegrpc.NewServer()
 	proto.RegisterNotificationServiceServer(server, grpcserver.NewServer(otpService))
 
 	reflection.Register(server)
