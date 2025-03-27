@@ -16,4 +16,4 @@ todo
 .*.sw*
 
 # env
-.env
+internal/config/config.yml
