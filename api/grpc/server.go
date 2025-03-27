@@ -10,10 +10,10 @@ import (
 )
 
 type Server struct {
-	sv      *grpc.Server
-	ln      net.Listener
-	errCh   chan error
-	configs Config
+	server   *grpc.Server
+	listener net.Listener
+	errCh    chan error
+	configs  Config
 }
 
 func NewServer(notificationService *NotificationService, conf Config) (*Server, error) {
@@ -26,15 +26,15 @@ func NewServer(notificationService *NotificationService, conf Config) (*Server, 
 	proto.RegisterNotificationServiceServer(srv, notificationService)
 
 	return &Server{
-		sv:      srv,
-		ln:      listener,
-		errCh:   make(chan error),
-		configs: conf,
+		server:   srv,
+		listener: listener,
+		errCh:    make(chan error),
+		configs:  conf,
 	}, nil
 }
 
 func (s *Server) Start() {
-	s.errCh <- s.sv.Serve(s.ln)
+	s.errCh <- s.server.Serve(s.listener)
 }
 
 func (s *Server) Notify() <-chan error {
