@@ -37,9 +37,6 @@ func (a *SMTPAdapter) SendEmail(_ context.Context, recipient, subject, body stri
 	message.SetHeader("To", recipient)
 	message.SetHeader("Subject", subject)
 
-	// Set the plain text body
-	message.SetBody("text/plain", "This is a fallback text for email clients that don't support HTML")
-
 	// Add HTML alternative
 	message.AddAlternative("text/html", body)
 
