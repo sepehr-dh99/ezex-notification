@@ -2,7 +2,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -40,18 +39,12 @@ func Load(path string) (*Config, error) {
 
 // BasicCheck checks the necessary config checking from each module.
 func (cfg *Config) BasicCheck() error {
-	var errs []error
-
 	if err := cfg.SMTP.BasicCheck(); err != nil {
-		errs = append(errs, fmt.Errorf("SMTP config error: %w", err))
+		return err
 	}
 
 	if err := cfg.GRPC.BasicCheck(); err != nil {
-		errs = append(errs, fmt.Errorf("GRPC config error: %w", err))
-	}
-
-	if len(errs) > 0 {
-		return fmt.Errorf("configuration check failed: %w", errors.Join(errs...))
+		return err
 	}
 
 	return nil
