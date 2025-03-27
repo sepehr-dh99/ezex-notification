@@ -5,7 +5,6 @@ type Config struct {
 	Port      int    `yaml:"port"`
 	User      string `yaml:"user"`
 	Pass      string `yaml:"pass"`
-	OtpLength int    `yaml:"otp_length"`
 	FromEmail string `yaml:"from_email"`
 }
 
@@ -15,7 +14,6 @@ func DefaultConfig() *Config {
 		Port:      587,
 		User:      "smtp_user",
 		Pass:      "smtp_password",
-		OtpLength: 6,
 		FromEmail: "no-reply@example.com",
 	}
 }

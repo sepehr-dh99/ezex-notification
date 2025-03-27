@@ -8,5 +8,4 @@ smtp:
   port: 587
   user: "your-email@example.com"
   pass: "your-password"
-  otp_length: 6
   from_email: "noreply@example.com"
