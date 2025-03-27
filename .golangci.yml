@@ -130,6 +130,9 @@ linters-settings:
       - name: redefines-builtin-id
         disabled: true
 
+      - name: "if-return"
+        disabled: true
+
       - name: unhandled-error
         arguments:
           - "fmt.Printf"
