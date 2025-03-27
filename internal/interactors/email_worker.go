@@ -36,7 +36,7 @@ func (s *EmailWorker) SendEmail(
 	}
 
 	if err := s.emailPort.SendEmail(ctx, recipient, subject, body); err != nil {
-		return "", fmt.Errorf("failed to send OTP email to %s: %w", recipient, err)
+		return "", err
 	}
 
 	return body, nil

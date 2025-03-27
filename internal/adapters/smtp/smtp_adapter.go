@@ -41,7 +41,7 @@ func (a *SMTPAdapter) SendEmail(_ context.Context, recipient, subject, body stri
 	message.AddAlternative("text/html", body)
 
 	if err := a.dialer.DialAndSend(message); err != nil {
-		return fmt.Errorf("failed to send OTP email to %s: %w", recipient, err)
+		return fmt.Errorf("failed to send email to %s: %w", recipient, err)
 	}
 
 	return nil
