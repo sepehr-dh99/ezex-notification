@@ -5,12 +5,11 @@ import (
 	"flag"
 	"log"
 
-	"github.com/joho/godotenv"
-
 	grpcserver "github.com/ezex-io/ezex-notification/api/grpc"
 	"github.com/ezex-io/ezex-notification/internal/adapters/smtp"
 	"github.com/ezex-io/ezex-notification/internal/config"
 	"github.com/ezex-io/ezex-notification/internal/interactors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
