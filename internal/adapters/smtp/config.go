@@ -1,11 +1,16 @@
 package smtp
 
+import (
+	"os"
+	"strconv"
+)
+
 type Config struct {
-	Host      string `yaml:"host"`
-	Port      int    `yaml:"port"`
-	User      string `yaml:"user"`
-	Pass      string `yaml:"pass"`
-	FromEmail string `yaml:"from_email"`
+	Host      string
+	Port      int
+	User      string
+	Pass      string
+	FromEmail string
 }
 
 func DefaultConfig() *Config {
@@ -18,6 +23,35 @@ func DefaultConfig() *Config {
 	}
 }
 
+func LoadFromEnv() *Config {
+	cfg := DefaultConfig()
+
+	if v := os.Getenv("SMTP_HOST"); v != "" {
+		cfg.Host = v
+	}
+
+	if v := os.Getenv("SMTP_PORT"); v != "" {
+		if port, err := strconv.Atoi(v); err == nil {
+			cfg.Port = port
+		}
+	}
+
+	if v := os.Getenv("SMTP_USER"); v != "" {
+		cfg.User = v
+	}
+
+	if v := os.Getenv("SMTP_PASS"); v != "" {
+		cfg.Pass = v
+	}
+
+	if v := os.Getenv("SMTP_FROM_EMAIL"); v != "" {
+		cfg.FromEmail = v
+	}
+
+	return cfg
+}
+
 func (*Config) BasicCheck() error {
+	// Add validation if needed
 	return nil
 }
