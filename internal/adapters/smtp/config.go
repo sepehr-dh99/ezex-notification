@@ -1,8 +1,7 @@
 package smtp
 
 import (
-	"os"
-	"strconv"
+	"github.com/ezex-io/gopkg/env"
 )
 
 type Config struct {
@@ -13,42 +12,14 @@ type Config struct {
 	FromEmail string
 }
 
-func DefaultConfig() *Config {
-	return &Config{
-		Host:      "smtp.example.com",
-		Port:      587,
-		User:      "smtp_user",
-		Pass:      "smtp_password",
-		FromEmail: "no-reply@example.com",
-	}
-}
-
 func LoadFromEnv() *Config {
-	cfg := DefaultConfig()
-
-	if v := os.Getenv("SMTP_HOST"); v != "" {
-		cfg.Host = v
+	return &Config{
+		Host:      env.GetEnv[string]("SMTP_HOST"),
+		Port:      env.GetEnv[int]("SMTP_PORT", env.WithDefault("587")),
+		User:      env.GetEnv[string]("SMTP_USER"),
+		Pass:      env.GetEnv[string]("SMTP_PASS"),
+		FromEmail: env.GetEnv[string]("SMTP_FROM_EMAIL"),
 	}
-
-	if v := os.Getenv("SMTP_PORT"); v != "" {
-		if port, err := strconv.Atoi(v); err == nil {
-			cfg.Port = port
-		}
-	}
-
-	if v := os.Getenv("SMTP_USER"); v != "" {
-		cfg.User = v
-	}
-
-	if v := os.Getenv("SMTP_PASS"); v != "" {
-		cfg.Pass = v
-	}
-
-	if v := os.Getenv("SMTP_FROM_EMAIL"); v != "" {
-		cfg.FromEmail = v
-	}
-
-	return cfg
 }
 
 func (*Config) BasicCheck() error {

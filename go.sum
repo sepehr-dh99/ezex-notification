@@ -1,3 +1,5 @@
+github.com/ezex-io/gopkg/env v0.0.0-20250409112406-553a120be13d h1:EQN8UvnHt1iVmmTq5xd80BAcQgCcLRd51NXuj69yLnk=
+github.com/ezex-io/gopkg/env v0.0.0-20250409112406-553a120be13d/go.mod h1:ODJllVZrzyPOHDfYIURV57D3IWaKnJOdYcfLVCz/UW4=
 github.com/go-logr/logr v1.4.2 h1:6pFjapn8bFcIbiKo3XT4j/BhANplGihG6tvd+8rYgrY=
 github.com/go-logr/logr v1.4.2/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
