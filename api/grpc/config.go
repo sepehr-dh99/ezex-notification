@@ -20,5 +20,6 @@ func (c *Config) BasicCheck() error {
 	if c.Port == "" {
 		return errors.New("config: gRPC port is not set")
 	}
+
 	return nil
 }
