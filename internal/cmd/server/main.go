@@ -47,6 +47,6 @@ func main() {
 	logging.Debug("Starting gRPC server on port %s", cfg.GRPC.Port)
 
 	if err := <-server.Notify(); err != nil {
-		logging.Fatal("gRPC server error: %v", err)
+		logging.Warn("gRPC server error: %v", err)
 	}
 }
