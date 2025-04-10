@@ -10,6 +10,8 @@ require (
 )
 
 require (
+	github.com/ezex-io/gopkg/env v0.0.0-20250409112406-553a120be13d // indirect
+	github.com/ezex-io/gopkg/logger v0.1.2 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

@@ -3,45 +3,50 @@ package main
 
 import (
 	"flag"
-	"log"
 
 	grpcserver "github.com/ezex-io/ezex-notification/api/grpc"
 	"github.com/ezex-io/ezex-notification/internal/adapters/smtp"
 	"github.com/ezex-io/ezex-notification/internal/config"
 	"github.com/ezex-io/ezex-notification/internal/interactors"
+	"github.com/ezex-io/gopkg/logger"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	configPath := flag.String("config", "./config.yml", "Path to configuration file")
-
+	envFile := flag.String("env", ".env", "Path to environment file")
 	flag.Parse()
 
-	cfg, err := config.Load(*configPath)
-	if err != nil {
-		log.Fatalf("failed to load module's config: %v", err)
+	logging := logger.NewSlog(nil)
+
+	// Load the specified env file
+	if err := godotenv.Load(*envFile); err != nil {
+		logging.Warn("Failed to load env file '%s': %v. Continuing with system environment...", *envFile, err)
+	} else {
+		logging.Debug("Loaded environment variables from '%s'", *envFile)
+	}
+
+	// Load config from environment
+	cfg := config.Load()
+	if err := cfg.BasicCheck(); err != nil {
+		logging.Fatal("failed to load config: %v", err)
 	}
 
 	emailSender := smtp.NewSMTPAdapter(cfg.SMTP)
 	emailWorker := interactors.NewEmailWorker(emailSender)
 
-	// Create notification service (only needs the emailWorker)
 	notificationService := grpcserver.NewNotificationService(emailWorker)
 
-	// Create and start gRPC server
 	server, err := grpcserver.NewServer(notificationService, grpcserver.Config{
 		Port: cfg.GRPC.Port,
 	})
 	if err != nil {
-		log.Fatalf("failed to create gRPC server: %v", err)
+		logging.Fatal("failed to create gRPC server: %v", err)
 	}
 
-	// Start the server in a goroutine
 	go server.Start()
+	logging.Debug("Starting gRPC server on port %s", cfg.GRPC.Port)
 
-	log.Printf("Starting gRPC server on port %s", cfg.GRPC.Port)
-
-	// Wait for server error
 	if err := <-server.Notify(); err != nil {
-		log.Fatalf("gRPC server error: %v", err)
+		logging.Warn("gRPC server error: %v", err)
 	}
 }

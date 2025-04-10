@@ -1,23 +1,28 @@
 package smtp
 
+import (
+	"github.com/ezex-io/gopkg/env"
+)
+
 type Config struct {
-	Host      string `yaml:"host"`
-	Port      int    `yaml:"port"`
-	User      string `yaml:"user"`
-	Pass      string `yaml:"pass"`
-	FromEmail string `yaml:"from_email"`
+	Host      string
+	Port      int
+	User      string
+	Pass      string
+	FromEmail string
 }
 
-func DefaultConfig() *Config {
+func LoadFromEnv() *Config {
 	return &Config{
-		Host:      "smtp.example.com",
-		Port:      587,
-		User:      "smtp_user",
-		Pass:      "smtp_password",
-		FromEmail: "no-reply@example.com",
+		Host:      env.GetEnv[string]("EZEX_NOTIFICATION_SMTP_HOST"),
+		Port:      env.GetEnv[int]("EZEX_NOTIFICATION_SMTP_PORT", env.WithDefault("587")),
+		User:      env.GetEnv[string]("EZEX_NOTIFICATION_SMTP_USER"),
+		Pass:      env.GetEnv[string]("EZEX_NOTIFICATION_SMTP_PASS"),
+		FromEmail: env.GetEnv[string]("EZEX_NOTIFICATION_SMTP_FROM_EMAIL"),
 	}
 }
 
 func (*Config) BasicCheck() error {
+	// Add validation if needed
 	return nil
 }

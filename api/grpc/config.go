@@ -1,21 +1,20 @@
 package grpc
 
-import "errors"
+import (
+	"github.com/ezex-io/gopkg/env"
+)
 
 type Config struct {
-	Port string `yaml:"port"`
+	Port string
 }
 
-func DefaultConfig() *Config {
+func LoadFromEnv() *Config {
 	return &Config{
-		Port: "50051",
+		Port: env.GetEnv[string]("EZEX_NOTIFICATION_GRPC_PORT", env.WithDefault("50051")),
 	}
 }
 
-func (c *Config) BasicCheck() error {
-	if c.Port == "" {
-		return errors.New("config: gRPC port dose not set")
-	}
-
+func (*Config) BasicCheck() error {
+	// Add validation if needed
 	return nil
 }
