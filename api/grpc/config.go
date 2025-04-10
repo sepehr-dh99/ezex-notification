@@ -14,7 +14,7 @@ func LoadFromEnv() *Config {
 	}
 }
 
-func (c *Config) BasicCheck() error {
+func (*Config) BasicCheck() error {
 	// Add validation if needed
 	return nil
 }
