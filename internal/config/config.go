@@ -2,8 +2,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/ezex-io/ezex-notification/api/grpc"
 	"github.com/ezex-io/ezex-notification/internal/adapters/smtp"
 )
@@ -13,17 +11,13 @@ type Config struct {
 	GRPC *grpc.Config
 }
 
-func Load() (*Config, error) {
+func Load() *Config {
 	config := &Config{
 		SMTP: smtp.LoadFromEnv(),
 		GRPC: grpc.LoadFromEnv(),
 	}
 
-	if err := config.BasicCheck(); err != nil {
-		return nil, fmt.Errorf("configurations basic check failed: %w", err)
-	}
-
-	return config, nil
+	return config
 }
 
 // BasicCheck checks the necessary config checking from each module.

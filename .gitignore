@@ -15,5 +15,4 @@ todo
 .swp
 .*.sw*
 
-# env 
 .env
