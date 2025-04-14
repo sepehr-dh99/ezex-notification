@@ -37,14 +37,14 @@ func main() {
 	notificationService := grpcserver.NewNotificationService(emailWorker)
 
 	server, err := grpcserver.NewServer(notificationService, grpcserver.Config{
-		Port: cfg.GRPC.Port,
+		Address: cfg.GRPC.Address,
 	})
 	if err != nil {
 		logging.Fatal("failed to create gRPC server: %v", err)
 	}
 
 	go server.Start()
-	logging.Debug("Starting gRPC server on port %s", cfg.GRPC.Port)
+	logging.Debug("Starting gRPC server on Address %s", cfg.GRPC.Address)
 
 	if err := <-server.Notify(); err != nil {
 		logging.Warn("gRPC server error: %v", err)

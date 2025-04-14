@@ -17,7 +17,7 @@ type Server struct {
 }
 
 func NewServer(notificationService *NotificationService, conf Config) (*Server, error) {
-	listener, err := net.Listen("tcp", ":"+conf.Port)
+	listener, err := net.Listen("tcp", conf.Address)
 	if err != nil {
 		return nil, fmt.Errorf("failed to listen on port: %w", err)
 	}

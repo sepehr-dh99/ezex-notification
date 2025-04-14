@@ -5,12 +5,12 @@ import (
 )
 
 type Config struct {
-	Port string
+	Address string
 }
 
 func LoadFromEnv() *Config {
 	return &Config{
-		Port: env.GetEnv[string]("EZEX_NOTIFICATION_GRPC_PORT", env.WithDefault("50051")),
+		Address: env.GetEnv[string]("EZEX_NOTIFICATION_GRPC_ADDRESS", env.WithDefault("0.0.0.0:50051")),
 	}
 }
 
